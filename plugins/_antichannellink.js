@@ -11,7 +11,7 @@ let before = async function (m, { conn, isAdmin, isBotAdmin }) {
     await conn.sendMessage(
       m.chat,
       {
-        text: `⚠️ *تـم اكـتـشاف رابـط قـناة أو مـجموعـة!*\n\nالعـضو *@${m.sender.split('@')[0]}* تـم طـرده لأنـه خـالف قـوانين المـجموعـة وقـام بإرسـال روابـط.\n\n🚫 هذا الـتصرف مـمنوع تـمامًا.`,
+        text: `⚠️ *تـم اكتـشاف رابط قـناة أو مجـموعة!*\n\nالعـضو *@${m.sender.split('@')[0]}* تم طـرده لأنه خـالف قـوانيـن المـجموعة وقـام بإرسال روابط.\n\n🚫 هـذا التصرف مـمنوع تمامًا.`,
         mentions: [m.sender]
       },
       { quoted: m }
@@ -26,3 +26,4 @@ let before = async function (m, { conn, isAdmin, isBotAdmin }) {
 }
 
 export default { before }
+        
