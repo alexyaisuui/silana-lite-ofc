@@ -6,11 +6,11 @@ import axios from 'axios';
 let handler = async (m, { conn, args }) => {
   const appName = args.join(" ");
   if (!appName) {
-    return m.reply('المرجو كتابة اسم التطبيق. مثال: \n.apkdownload whatsapp');
+    return m.reply('الـمرجو كتـابة اسـم التطبيق. مـثال: \n.apkdownload whatsapp');
   }
 
   // رسالة انتظار
-  await m.reply("⏳ المرجو الانتظار قليلا لا تنسى ان تتابع \ninstagram.com/noureddine_ouafy");
+  await m.reply("⏳ المرجو الانتظار قليلا لا تنسى ان تتابع \nhttps://instagram.com/manon_tech__99");
 
   try {
     const apiUrl = `https://api.nexoracle.com/downloader/apk`;
@@ -30,18 +30,18 @@ let handler = async (m, { conn, args }) => {
     // إرسال صورة التطبيق مع رسالة
     await conn.sendMessage(m.chat, {
       image: { url: icon },
-      caption: `📦 *جاري تحميل ${name}...*`
+      caption: `📦 *جـاري تحـمـيل ${name}...*`
     }, { quoted: m });
 
     const apkRes = await axios.get(dllink, { responseType: 'arraybuffer' });
     const apkBuffer = Buffer.from(apkRes.data, 'binary');
 
-    const caption = `📦 *معلومات التطبيق:*\n\n` +
-                    `🔖 *الاسم:* ${name}\n` +
-                    `📅 *آخر تحديث:* ${lastup}\n` +
-                    `📦 *الحزمة:* ${pkg}\n` +
-                    `📏 *الحجم:* ${size}\n\n` +
-                    `> 📥 تم التحميل بواسطة Silana Bot`;
+    const caption = `📦 *معـلومات التـطبيق:*\n\n` +
+                    `🔖 *الاسـم:* ${name}\n` +
+                    `📅 *آخـر تحـديـث:* ${lastup}\n` +
+                    `📦 *الـحزمـة:* ${pkg}\n` +
+                    `📏 *الحـجم:* ${size}\n\n` +
+                    `> 📥 تـم التـحـميل بواسـطة Alexy Ai`;
 
     await conn.sendMessage(m.chat, {
       document: apkBuffer,
@@ -50,11 +50,11 @@ let handler = async (m, { conn, args }) => {
       caption
     }, { quoted: m });
 
-    await m.reply("✅ تم إرسال التطبيق بنجاح");
+    await m.reply("✅ تـم إرسـال التطـبيق بنـجاح");
 
   } catch (error) {
-    console.error('خطأ أثناء تحميل التطبيق:', error);
-    await m.reply('❌ حصل خطأ أثناء تحميل التطبيق.');
+    console.error('خطأ أثناء تحـميل التطـبيق:', error);
+    await m.reply('❌ حصل خـطأ أثنـاء تـحميل التطـبيق.');
   }
 };
 
