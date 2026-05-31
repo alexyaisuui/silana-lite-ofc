@@ -1,370 +1,133 @@
 import moment from 'moment-timezone'
-import PhoneNumber from 'awesome-phonenumber'
-import fs from 'fs'
-import fetch from 'node-fetch'
 
 let handler = async (m, { conn, usedPrefix, command, args }) => {
-  const cmd = args[0] || 'list';
-  let type = (args[0] || '').toLowerCase()
-  let _menu = global.db.data.settings[conn.user.jid]
-    let d = new Date(new Date + 3600000)
-    let locale = 'id'
-    let week = d.toLocaleDateString(locale, { weekday: 'long' })
-    let date = d.toLocaleDateString(locale, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  const tagCount = {};
-  const tagHelpMapping = {};
-  Object.keys(global.plugins)
-    .filter(plugin => !plugin.disabled)
-    .forEach(plugin => {
-      const tagsArray = Array.isArray(global.plugins[plugin].tags)
-        ? global.plugins[plugin].tags
-        : [];
+    const cmd = (args[0] || 'list').toLowerCase()
 
-      if (tagsArray.length > 0) {
-        const helpArray = Array.isArray(global.plugins[plugin].help)
-          ? global.plugins[plugin].help
-          : [global.plugins[plugin].help];
+    let d = new Date()
+    let date = d.toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' })
+    let time = moment().tz('Africa/Casablanca').format('HH:mm:ss')
 
-        tagsArray.forEach(tag => {
-          if (tag) {
-            if (tagCount[tag]) {
-              tagCount[tag]++;
-              tagHelpMapping[tag].push(...helpArray);
-            } else {
-              tagCount[tag] = 1;
-              tagHelpMapping[tag] = [...helpArray];
-            }
-          }
-        });
-      }
-    });
-           let isiMenu = []
-          let objekk = Object.keys(tagCount)
-          Object.entries(tagCount).map(([key, value]) => isiMenu.push({
-          header: ` list cmd ${key}  `,
-                    title: `📌 إظهار قائمة أوامر [ ${key} ]`,
-                    description: `عدد ${value} الميزات`,
-                    id: ".menu " + key,
-                    })
-          ).join();
-          const datas = {
-    title: "أنقر هنا !",
-    sections: [{
-            title: "جميع الأوامر الخاصة بالبوت",
-            highlight_label: "إظهار كافة الميزات",
-            rows: [{
-                    header: " All Menu",
-                    title: "جميع الأوامر الخاصة بالبوت",
-                    description: "",
-                    id: ".menu all",
-                }],
-        },
-        {
-            title: 'لائحة الأوامر ',
-            highlight_label: "الائحة",
-            rows: [...isiMenu]
-        },
-        {
-            title: 'معلومات عن البوت',
-            highlight_label: "معلومة",
-            rows: [
-            {
-                    header: "سكريبت البوت",
-                    title: "معلومات حول سكريبت البوت",
-                    description: "",
-                    id: ".sc",
-                },
-            {
-                    header: "Info Owner",
-                    title: "معلومات عن صاحب البوت",
-                    description: "",
-                    id: ".owner",
-                },
-            {
-                    header: "معلومات الميزة الإجمالية",
-                    title: "المعلومات المتعلقة بالميزات الإجمالية للبوت",
-                    description: "",
-                    id: ".totalfitur",
-                },
-            {
-                    header: "معلومات سرعة الاستجابة",
-                    title: "معلومات بخصوص سرعة استجابة الروبوت",
-                    description: "",
-                    id: ".os",
-                }
-                ]
-        }
-    ]
-};
+    const bgImage = 'https://files.catbox.moe/0cj5za.jpg'
+    const channelUrl = 'https://whatsapp.com/channel/0029Vb7nYRZHAdNWqXl8ug1b'
 
-  let objek = Object.values(db.data.stats).map(v => v.success)
-  let totalHit = 0
-   for (let b of objek) {
-    totalHit += b
-    }
-  let docUrl = 'https://telegra.ph/file/e601537d315cbc69b856b.jpg'
-  let help = Object.values(global.plugins).filter(plugin => !plugin.disabled).map(plugin => {
-    return {
-      help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
-      tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
-      prefix: 'customPrefix' in plugin,
-      limit: plugin.limit,
-      premium: plugin.premium,
-      enabled: !plugin.disabled,
-    }
-  });
-    
-   let data = db.data.users[m.sender];
-   let fitur = Object.values(plugins).filter(v => v.help).map(v => v.help).flat(1);
-   let tUser = Object.keys(db.data.users).length;
-   let userReg = Object.values(global.db.data.users).filter(user => user.registered == true).length
-   
-let headers = `إعتبرني : رفيقتك ، أستاذتك ،عزيزتك ،التي ستجدها قربك في كل يوم لأجعل لك من نجمة ستة و من استخدام تطبيق الواتساب طعما آخر 🙂‍↕️🧠🗣️\n\n`
+    const tagCount = {}
+    const tagHelpMapping = {}
 
-  if (cmd === 'list') {
-    const daftarTag = Object.keys(tagCount)
-      .sort()
-      .join('\n│※ ' + usedPrefix + command + '  ');
-    const more = String.fromCharCode(8206)
-    const readMore = more.repeat(4001)
-    let _mpt
-    if (process.send) {
-      process.send('uptime')
-      _mpt = await new Promise(resolve => {
-        process.once('message', resolve)
-        setTimeout(resolve, 1000)
-      }) * 1000
-    }
-    let mpt = clockString(_mpt)
-    let name = m.pushName || conn.getName(m.sender)
-    let list = `${headers}${readMore}\n╭──「 LIST MENU 」\n│※ ${usedPrefix + command} all\n│※ ${daftarTag}\n╰──────────•`
- const pp = await conn.profilePictureUrl(m.sender, 'image').catch((_) => "https://telegra.ph/file/1ecdb5a0aee62ef17d7fc.jpg");
-if (_menu.image) {
+    Object.values(global.plugins)
+  .filter(p =>!p.disabled && p.help && p.tags)
+  .forEach(plugin => {
+        const tags = Array.isArray(plugin.tags)? plugin.tags : [plugin.tags]
+        const helps = Array.isArray(plugin.help)? plugin.help : [plugin.help]
 
-conn.sendMessage(m.chat, {
-      text: list,
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
-      
-      } else if (_menu.gif) {
+        tags.forEach(tag => {
+            if (!tag) return
+            if (!tagCount[tag]) {
+                tagCount[tag] = 0
+                tagHelpMapping[tag] = []
+            }
+            tagCount[tag] += helps.length
+            tagHelpMapping[tag].push(...helps)
+        })
+    })
 
-conn.sendMessage(m.chat, {
-      video: {url: "https://telegra.ph/file/ca2d038b71ff86e2c70d3.mp4"},
-      gifPlayback: true,
-      caption: list,
-      jpegThumbnail: await conn.resize((await conn.getFile(docUrl)).data, 180, 72),
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
+    const totalCmd = Object.values(tagCount).reduce((a, b) => a + b, 0)
+    const tagList = Object.keys(tagCount).sort()
 
-} else if (_menu.teks) {
+    const headerText = `╭───「 *${conn.user.name}* 」───╮
+│ *Hello @${m.pushName}* 👋
+│ *${date}* 📅
+│ *${time}* ⏰
+│ *${totalCmd} ${tagList.length}* 📦
+╰────────────────────────╯
 
-conn.reply(m.chat, list, m)
+🤖 *مرحباً بقائمة أوامر البوت*
+اختر تصنيف من القائمة أو حمل الملف الكامل`
 
-} else if (_menu.doc) {
+    const sendList = async (caption) => {
+        if (caption.length > 4096) caption = caption.slice(0, 4090) + '\n\n...القائمة طويلة جداً'
+        return conn.sendMessage(m.chat, {
+            image: { url: bgImage },
+            caption,
+            mentions: [m.sender]
+        })
+    }
 
-conn.sendMessage(m.chat, {
-            document: fs.readFileSync("./package.json"),
-            fileName: namebot,
-            fileLength: new Date(),
-            pageCount: "2024",
-            caption: list,
-            jpegThumbnail: await conn.resize((await conn.getFile(docUrl)).data, 180, 72),
-            contextInfo: {
-              externalAdReply: {
-                containsAutoReply: true,
-                mediaType: 1,
-                mediaUrl: 'https://telegra.ph/file/74abb87ac6082571db546.jpg',
-                renderLargerThumbnail: true,
-                showAdAttribution: true,
-                sourceUrl: sgc,
-                thumbnailUrl: thumbnail,
-                title: `${date}`,
-                body: '',
-              },
-            },
-          }, {quoted: m});
-          } else if (_menu.button) {
-          
- conn.sendListImageButton(m.chat, `${headers}`, datas, 'عَنْ أَبِي هُرَيْرَةَ رضي الله تعالى عنه: أَنَّ رَسُولَ اللَّهِ ﷺ قَالَ: إِذَا مَاتَ ابنُ آدم انْقَطَعَ عَنْهُ عَمَلُهُ إِلَّا مِنْ ثَلَاثٍ: صَدَقَةٍ جَارِيَةٍ، أو عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ', thumbnail)
-          }
-  } else if (tagCount[cmd]) {
-    const daftarHelp = tagHelpMapping[cmd].map((helpItem, index) => {
-        
-      const premiumSign = help[index].premium ? '🅟' : '';
-      const limitSign = help[index].limit ? 'Ⓛ' : '';
-      return `.${helpItem} ${premiumSign}${limitSign}`;
-    }).join('\n│※'  + ' ');
-        const more = String.fromCharCode(8206)
-        const readMore = more.repeat(4001)
-        
-    const list2 =  `${headers}${readMore}╭──「 MENU ${cmd.toUpperCase()} 」\n├──────────────\n│※ ${daftarHelp}\n╰──────────•\n\n*Total menu ${cmd}: ${tagHelpMapping[cmd].length}*`
-     const pp = await conn.profilePictureUrl(m.sender, 'image').catch((_) => "https://telegra.ph/file/1ecdb5a0aee62ef17d7fc.jpg");
-if (_menu.image) {
+    // القائمة الرئيسية مع الأزرار
+    if (cmd === 'list' || cmd === 'menu') {
+        const sections = [{
+            title: "التـصنيـفات",
+            rows: tagList.map(tag => ({
+                id: `${usedPrefix}${command} ${tag}`,
+                title: tag.toUpperCase(),
+                description: `${tagCount[tag]} أمر`
+            }))
+        }]
 
-conn.sendMessage(m.chat, {
-      
-      text: list2,
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
-      
-      } else if (_menu.gif) {
+        return conn.sendMessage(m.chat, {
+            image: { url: bgImage },
+            caption: headerText,
+            footer: "© ALEXY AI",
+            buttons: [
+                { buttonId: `${usedPrefix}${command} all`, buttonText: { displayText: "📦 كـل الأوامـر" }, type: 1 },
+                { buttonId: `${usedPrefix}${command} download`, buttonText: { displayText: "📥 تـحميـل الـقائـمة" }, type: 1 },
+                { buttonId: `${usedPrefix}${command} قناة`, buttonText: { displayText: "📢 قـنـاة واتسـاب" }, type: 1 },
+                {
+                    buttonId: 'list_menu',
+                    buttonText: { displayText: "📋 اخـتر تصـنيـف" },
+                    type: 4,
+                    nativeFlowInfo: {
+                        name: 'single_select',
+                        paramsJson: JSON.stringify({ title: "اختر التصنيف", sections })
+                    }
+                }
+            ],
+            headerType: 4,
+            mentions: [m.sender]
+        })
 
-conn.sendMessage(m.chat, {
-      video: {url: "https://telegra.ph/file/ca2d038b71ff86e2c70d3.mp4"},
-      gifPlayback: true,
-      caption: list2,
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
+    // عرض كل الأوامر
+    } else if (cmd === 'all') {
+        let allTagsAndHelp = tagList.map(tag => {
+            const daftarHelp = tagHelpMapping[tag].sort().map(h => ` ◦ ${usedPrefix}${h}`).join('\n')
+            return `╭──「 *${tag.toUpperCase()}* 」──╮\n${daftarHelp}\n╰──────────────────╯`
+        }).join('\n\n')
+        return sendList(`${headerText}\n\n${allTagsAndHelp}`)
 
-} else if (_menu.teks) {
+    // تحميل القائمة كملف txt
+    } else if (cmd === 'download') {
+        let txt = `قائمة أوامر ${conn.user.name}\nالتاريخ: ${date} ${time}\n\n`
+        tagList.forEach(tag => {
+            txt += `[${tag.toUpperCase()}]\n`
+            tagHelpMapping[tag].sort().forEach(h => txt += `${usedPrefix}${h}\n`)
+            txt += '\n'
+        })
+        return conn.sendMessage(m.chat, {
+            document: Buffer.from(txt, 'utf-8'),
+            mimetype: 'text/plain',
+            fileName: `menu_${conn.user.name}.txt`,
+            caption: `📥 تـم تجهيـز ${totalCmd} أمـر لك`
+        }, { quoted: m })
 
-conn.reply(m.chat, list2, m)
+    // عرض رابط القناة
+    } else if (cmd === 'قناة' || cmd === 'channel') {
+        return conn.sendMessage(m.chat, {
+            text: `📢 *تابع قناتنا على واتساب*\n\nهنا ينزل كل جديد وتحديثات البوت\n${channelUrl}`,
+            footer: "© ALEXY AI",
+            buttons: [
+                { buttonId: 'url', buttonText: { displayText: "🔗 تـم" }, type: 2, url: channelUrl }
+            ],
+            headerType: 1
+        }, { quoted: m })
 
-} else if (_menu.doc) {
-
-conn.sendMessage(m.chat, {
-            document: fs.readFileSync("./package.json"),
-            fileName: namebot,
-            fileLength: new Date(),
-            pageCount: "2024",
-            jpegThumbnail: await conn.resize((await conn.getFile(docUrl)).data, 180, 72),
-            caption: list2,
-            contextInfo: {
-              externalAdReply: {
-                containsAutoReply: true,
-                mediaType: 1,
-                mediaUrl: 'https://telegra.ph/file/74abb87ac6082571db546.jpg',
-                renderLargerThumbnail: true,
-                showAdAttribution: true,
-                sourceUrl: sgc,
-                thumbnailUrl: thumbnail,
-                title: `${date}`,
-                body: '',
-              },
-            },
-          }, {quoted: m});
-          } else if (_menu.button) {
-          conn.sendListImageButton(m.chat, `IM SILANA LITE AI\n\n${list2}`, datas, wm, thumbnail)
-          }
-          } else if (cmd === 'all') {
-    let name = m.pushName || conn.getName(m.sender)
-    const more = String.fromCharCode(8206)
-    const readMore = more.repeat(4001)
-    const allTagsAndHelp = Object.keys(tagCount).map(tag => {
-      const daftarHelp = tagHelpMapping[tag].map((helpItem, index) => {
-        const premiumSign = help[index].premium ? '🅟' : '';
-        const limitSign = help[index].limit ? 'Ⓛ' : '';
-        return `.${helpItem} ${premiumSign}${limitSign}`;
-      }).join('\n│※' + ' ');
-      return`╭──「 MENU ${tag.toUpperCase()} 」\n├──────────────\n│※ ${daftarHelp}\n╰──────────•`;
-    }).join('\n');
-    let all =  `${headers}${readMore}\n${allTagsAndHelp}\n${wm}`
-    const pp = await conn.profilePictureUrl(m.sender, 'image').catch((_) => "https://telegra.ph/file/1ecdb5a0aee62ef17d7fc.jpg");
-    if (_menu.image) {
-
-conn.sendMessage(m.chat, {
-      text: all,
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
-      
-      } else if (_menu.gif) {
-
-conn.sendMessage(m.chat, {
-      video: {url: "https://telegra.ph/file/ca2d038b71ff86e2c70d3.mp4"},
-      gifPlayback: true,
-      caption: all,
-      contextInfo: {
-      externalAdReply: {
-      title: namebot,
-      body: 'M E N U',
-      thumbnailUrl: thumbnail,
-      souceUrl: sgc,
-      mediaType: 1,
-      renderLargerThumbnail: true
-      }}}, {quoted: m})
-
-} else if (_menu.teks) {
-
-conn.reply(m.chat, all, m)
-
-} else if (_menu.doc) {
-
-conn.sendMessage(m.chat, {
-            document: fs.readFileSync("./package.json"),
-            fileName: namebot,
-            fileLength: new Date(),
-            pageCount: "2024",
-            caption: all,
-            jpegThumbnail: await conn.resize((await conn.getFile(docUrl)).data, 180, 72),
-            contextInfo: {
-              externalAdReply: {
-                containsAutoReply: true,
-                mediaType: 1,
-                mediaUrl: 'https://telegra.ph/file/74abb87ac6082571db546.jpg',
-                renderLargerThumbnail: true,
-                showAdAttribution: true,
-                sourceUrl: sgc,
-                thumbnailUrl: thumbnail,
-                title: `${date}`,
-                body: '',
-              },
-            },
-          }, {quoted: m});
-          } else if (_menu.button) {
-          conn.sendListImageButton(m.chat, `IM SILANA LITE AI\n${all}`, datas, 'instagram.com/noureddine_ouafy', thumbnail)
-          }
-  } else {
-  await conn.reply(m.chat, `"'${cmd}' could not be found. Use commands '${command} list' atau '${command} all' to see the available menu.`,m);
-  }
+    // عرض تصنيف معين
+    } else if (tagCount[cmd]) {
+        const daftarHelp = tagHelpMapping[cmd].sort().map(h => ` ◦ ${usedPrefix}${h}`).join('\n')
+        const list2 = `${headerText}\n\n╭───「 *${cmd.toUpperCase()}* 」───╮\n${daftarHelp}\n╰────────────────────────╯\n\n*الإجمالي: ${tagHelpMapping[cmd].length} أمر*`
+        return sendList(list2)
+    }
 }
 
-handler.help = ['menu']
-handler.command = ['menu']
+handler.help = ['menu', 'قناة']
+handler.command = ['menu', 'help', 'list', 'قناة', 'channel']
 handler.register = false
 export default handler
-
-function clockString(ms) {
-  let h = isNaN(ms) ? '--' : Math.floor(ms / 3600000)
-  let m = isNaN(ms) ? '--' : Math.floor(ms / 60000) % 60
-  let s = isNaN(ms) ? '--' : Math.floor(ms / 1000) % 60
-  return [h, m, s].map(v => v.toString().padStart(2, 0)).join(':')
-}
