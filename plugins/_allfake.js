@@ -5,14 +5,13 @@ import axios from "axios";
 import speed from "performance-now";
 
 let handler = (m) => m;
+
 handler.all = async function (m) {
   let name = await conn.getName(m.sender);
-  let pp =
-    "https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg";
-  let fotonyu = "https://files.catbox.moe/hnbuh3.jpg";
-  let logo = "https://files.catbox.moe/hnbuh3.jpg"; // define logo aquí
-  let namebot = "SILANA LITE AI";
-  let sig = "https://instagram.com/noureddine_ouafy";
+  let logo = "https://files.catbox.moe/hnbuh3.jpg";
+  let namebot = "ALEXY AI";
+  let channelUrl = "https://whatsapp.com/channel/120363409733349082";
+  let channelJid = "120363409733349082@newsletter";
 
   try {
     // pp = await this.profilePictureUrl(m.sender, "image");
@@ -29,7 +28,6 @@ handler.all = async function (m) {
     ]);
     global.fsizedoc = pickRandom([2000, 3000, 2023000, 2024000]);
 
-    // módulos globales
     global.axios = (await import("axios")).default;
     global.fetch = (await import("node-fetch")).default;
     global.cheerio = (await import("cheerio")).default;
@@ -38,15 +36,13 @@ handler.all = async function (m) {
     let timestamp = speed();
     let latensi = speed() - timestamp;
     let ms = await latensi.toFixed(4);
-    const _uptime = process.uptime() * 1000;
 
-    // contacto del owner
     global.kontak2 = [
       [
         owner[0],
-        await conn.getName(owner[0] + "212717457920@s.whatsapp.net"),
-        "SILANA AI",
-        "https://whatsapp.com",
+        await conn.getName(owner[0] + "@s.whatsapp.net"),
+        "ALEXY AI",
+        channelUrl,
         true,
       ],
     ];
@@ -55,11 +51,7 @@ handler.all = async function (m) {
       key: {
         fromMe: false,
         participant: m.sender,
-        ...(m.chat
-          ? {
-              remoteJid: "BROADCAST GROUP",
-            }
-          : {}),
+      ...(m.chat? { remoteJid: "BROADCAST GROUP" } : {}),
       },
       message: {
         contactMessage: {
@@ -75,46 +67,56 @@ handler.all = async function (m) {
         remoteJid: "0@s.whatsapp.net",
       },
       message: {
-        conversation: `_${namebot} تم التحقق عن طريق الواتساب_`,
+        conversation: `_${namebot} تـم التـحقـق عـن طـريـق الـواتسـاب_`,
       },
     };
 
     global.ephemeral = "86400";
-
     global.ucapan = ucapan();
     global.botdate = date();
 
-    global.adReply = {
+    // الحل: خلي adReply فانكشن باش يخدم مع أي شخص
+    global.adReply = (text = "ALEXY AI") => ({
       contextInfo: {
         isForwarded: true,
-        forwardingScore: 1,
+        forwardingScore: 999,
+        mentionedJid: [m.sender],
         forwardedNewsletterMessageInfo: {
-          newsletterJid: "120363285847738492@newsletter",
+          newsletterJid: channelJid,
           serverMessageId: 103,
-          newsletterName: `SILANA LITE AI    |   هيا نحو النجاح 🧑‍🏫`,
+          newsletterName: `ALEXY AI 🌠`,
         },
         externalAdReply: {
           title: namebot,
-          body: global.ucapan,
+          body: text,
           thumbnailUrl: logo,
-          sourceUrl: sig,
+          sourceUrl: channelUrl,
           mediaType: 1,
-          renderLargerThumbnail: false,
+          renderLargerThumbnail: true,
         },
       },
-    };
+    });
 
-    global.fakeig = {
+    // نفس الشيء لـ fakeig
+    global.fakeig = (text = "ALEXY AI") => ({
       contextInfo: {
+        isForwarded: true,
+        forwardingScore: 999,
+        mentionedJid: [m.sender],
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: channelJid,
+          serverMessageId: 103,
+          newsletterName: `ALEXY AI 🌠`,
+        },
         externalAdReply: {
           showAdAttribution: true,
           title: namebot,
-          body: ucapan(),
-          thumbnailUrl: pp,
-          sourceUrl: sig,
+          body: text,
+          thumbnailUrl: logo,
+          sourceUrl: channelUrl,
         },
       },
-    };
+    });
   }
 };
 
@@ -122,37 +124,22 @@ export default handler;
 
 function date() {
   let d = new Date(new Date() + 3600000);
-  let locale = "id";
-  let week = d.toLocaleDateString(locale, {
-    weekday: "long",
-  });
-  let date = d.toLocaleDateString(locale, {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  let tgl = `${week}, ${date}`;
-  return tgl;
+  let locale = "ar";
+  let week = d.toLocaleDateString(locale, { weekday: "long" });
+  let date = d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+  return `${week}, ${date}`;
 }
 
 function ucapan() {
   const time = moment.tz("Africa/Casablanca").format("HH");
-  let res = "اضغط هنا لمتابعة صاحب البوت  ";
-  if (time >= 4) {
-    res = "اضغط هنا لمتابعة صاحب البوت  ";
-  }
-  if (time > 10) {
-    res = "اضغط هنا لمتابعة صاحب البوت  ";
-  }
-  if (time >= 15) {
-    res = "اضغط هنا لمتابعة صاحب البوت  ";
-  }
-  if (time >= 18) {
-    res = "اضغط هنا لمتابعة صاحب البوت  ";
-  }
-  return res;
+  if (time >= 4 && time < 10) return "صباح الخير 🌤️";
+  if (time >= 10 && time < 15) return "مساء الخير ☀️";
+  if (time >= 15 && time < 18) return "عواشركم مبروكة 🌅";
+  if (time >= 18) return "مساء النور 🌙";
+  return "اضغط هنا لمتابعة صاحب البوت";
 }
 
 function pickRandom(list) {
   return list[Math.floor(list.length * Math.random())];
-          }
+      }
+          
