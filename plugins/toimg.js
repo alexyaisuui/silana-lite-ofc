@@ -1,5 +1,5 @@
 let handler = async (m, { conn, usedPrefix, command }) => {
-    const notStickerMessage = `✳️ Respond to stickers with :\n\n *${usedPrefix + command}*`
+    const notStickerMessage = `✳️ رد على الستيكرات بـ:\n\n *${usedPrefix + command}*`
     if (!m.quoted) throw notStickerMessage
     const q = m.quoted || m
     let mime = q.mediaType || ''
