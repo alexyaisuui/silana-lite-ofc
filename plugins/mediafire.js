@@ -1,9 +1,9 @@
 /*
-  Feature : MediaFire Downloader (Send File Directly)
-  Author  : AlfiDev (adapted)
-  Support : Single File & Folder
-  Note    : Auto send file if <= 100MB, otherwise send link
-  modified: by noureddine ouafy 
+  الميزة : تحميل من MediaFire (إرسال الملف مباشرة)
+  المطور  : AlfiDev (تم التعديل)
+  الدعم   : ملف واحد ومجلد
+  ملاحظة  : يتم إرسال الملف تلقائياً إذا كان ≤ 100MB، وإلا يتم إرسال الرابط
+  التعديل : بواسطة noureddine ouafy
 */
 
 import axios from "axios"
@@ -13,9 +13,9 @@ import crypto from "crypto"
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122 Safari/537.36"
 
-const MAX_SIZE = 100 * 1024 * 1024 // 100 MB
+const MAX_SIZE = 100 * 1024 * 1024 // 100 ميغابايت
 
-/* ================= UTILS ================= */
+/* ================= أدوات مساعدة ================= */
 
 const getDirectDownload = async (filePageUrl) => {
   try {
@@ -37,7 +37,7 @@ const downloadFile = async (url) => {
   return Buffer.from(res.data)
 }
 
-/* ================= MEDIAFIRE ================= */
+/* ================= MediaFire ================= */
 
 const scrapeSingleFile = (fileUrl) => {
   const quickkey = fileUrl.match(/file\/([^/]+)/)?.[1]
@@ -45,7 +45,7 @@ const scrapeSingleFile = (fileUrl) => {
 
   return [
     {
-      filename: "mediafire-file",
+      filename: "ملف-mediafire",
       size: 0,
       quickkey,
       filePageUrl: `https://www.mediafire.com/file/${quickkey}/file`,
@@ -94,61 +94,61 @@ const getAllItems = async (url) => {
   return []
 }
 
-/* ================= HANDLER ================= */
+/* ================= المعالج ================= */
 
 let handler = async (m, { conn, args }) => {
   if (!args[0])
     return conn.reply(
       m.chat,
-      "❌ Usage:\n.mediafire <mediafire link>",
+      "❌ طريقة الاستخدام:\n.mediafire <رابط MediaFire>",
       m
     )
 
-  await conn.reply(m.chat, "⏳ Processing MediaFire link...", m)
+  await conn.reply(m.chat, "⏳ جاري معالجة رابط MediaFire...", m)
 
   try {
     const items = await getAllItems(args[0])
     if (!items.length)
-      return conn.reply(m.chat, "❌ No files found.", m)
+      return conn.reply(m.chat, "❌ لم يتم العثور على أي ملفات.", m)
 
     for (const item of items) {
       const direct = await getDirectDownload(item.filePageUrl)
       if (!direct) {
-        await conn.reply(m.chat, `❌ Failed: ${item.filename}`, m)
+        await conn.reply(m.chat, `❌ فشل: ${item.filename}`, m)
         continue
       }
 
-      // ❌ File too large
+      // ❌ الملف كبير جداً
       if (item.size > MAX_SIZE) {
         await conn.reply(
           m.chat,
-          `⚠️ *File too large to send*\n\n📄 Name: ${item.filename}\n📦 Size: ${(item.size / 1024 / 1024).toFixed(
+          `⚠️ *الملف كبير جداً للإرسال*\n\n📄 الاسم: ${item.filename}\n📦 الحجم: ${(item.size / 1024 / 1024).toFixed(
             2
-          )} MB\n🔗 Download:\n${direct}`,
+          )} MB\n🔗 رابط التحميل:\n${direct}`,
           m
         )
         continue
       }
 
-      // ✅ Send file
+      // ✅ إرسال الملف
       const buffer = await downloadFile(direct)
 
       await conn.sendFile(
         m.chat,
         buffer,
         item.filename,
-        `📦 MediaFire File\n\n📄 Name: ${item.filename}\n📦 Size: ${(item.size / 1024 / 1024).toFixed(
+        `📦 ملف MediaFire\n\n📄 الاسم: ${item.filename}\n📦 الحجم: ${(item.size / 1024 / 1024).toFixed(
           2
         )} MB`,
         m
       )
     }
   } catch (e) {
-    conn.reply(m.chat, "❌ Error while downloading MediaFire file.", m)
+    conn.reply(m.chat, "❌ حدث خطأ أثناء تحميل ملف MediaFire.", m)
   }
 }
 
-/* ================= META ================= */
+/* ================= معلومات ================= */
 
 handler.help = ["mediafire"]
 handler.command = ["mediafire"]
