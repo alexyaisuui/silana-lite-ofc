@@ -28,7 +28,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     } else if (args[0] && isUrl(args[0])) {
       stiker = await createSticker(false, args[0], "", author, 20);
     } else
-      throw `Reply an image/video/sticker with command ${usedPrefix + command}`;
+      throw `رد على صورة/فيديـو/ستيكر بالأمر : ${usedPrefix + command}`;
   } catch (e) {
     console.log(e);
     stiker = e;
