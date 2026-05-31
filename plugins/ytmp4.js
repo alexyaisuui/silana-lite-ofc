@@ -17,7 +17,7 @@ async function poll(statusUrl) {
   const { data } = await axios.get(statusUrl, { headers })
 
   if (data.status === "completed") return data
-  if (data.status === "failed") throw new Error(data.message || "Conversion failed")
+  if (data.status === "failed") throw new Error(data.message || "فشل التحويل")
 
   await sleep(2000)
   return poll(statusUrl)
@@ -26,7 +26,7 @@ async function poll(statusUrl) {
 async function convertYouTube(url, quality = "720p") {
 
   if (!CONFIG.video.q.includes(quality)) {
-    throw new Error(`Invalid quality. Choose: ${CONFIG.video.q.join(", ")}`)
+    throw new Error(`جودة غير صالحة. اختر: ${CONFIG.video.q.join(", ")}`)
   }
 
   const { data: meta } = await axios.get("https://www.youtube.com/oembed", {
@@ -51,7 +51,7 @@ async function convertYouTube(url, quality = "720p") {
   }
 
   if (!downloadInit?.data?.statusUrl)
-    throw new Error("Converter failed to respond")
+    throw new Error("الخادم لم يستجب")
 
   const result = await poll(downloadInit.data.statusUrl)
 
@@ -64,22 +64,22 @@ async function convertYouTube(url, quality = "720p") {
 }
 
 /* =========================
-   Handler - ytmp4 only
+   المعالج - ytmp4 فقط
 ========================= */
 
 let handler = async (m, { conn, args, usedPrefix }) => {
 
   if (!args[0]) {
     return m.reply(`
-🎬 *YouTube MP4 Downloader*
+🎬 *تحميل فيديو يوتيوب MP4*
 
-Usage:
-${usedPrefix}ytmp4 <youtube url> [quality]
+طريقة الاستخدام:
+${usedPrefix}ytmp4 <رابط يوتيوب> [الجودة]
 
-Available quality:
+الجودات المتوفرة:
 144p, 240p, 360p, 480p, 720p, 1080p
 
-Example:
+مثال:
 ${usedPrefix}ytmp4 https://youtu.be/xxxxx 720p
 `)
   }
@@ -88,7 +88,7 @@ ${usedPrefix}ytmp4 https://youtu.be/xxxxx 720p
     const url = args[0]
     const quality = args[1] || "720p"
 
-    m.reply("⏳ Processing video, please wait...")
+    m.reply("⏳ جاري معالجة الفيديو، يرجى الانتظار...")
 
     const result = await convertYouTube(url, quality)
 
@@ -96,18 +96,18 @@ ${usedPrefix}ytmp4 https://youtu.be/xxxxx 720p
       m.chat,
       result.downloadUrl,
       result.filename,
-      `🎬 *YouTube MP4 Download*
+      `🎬 *تحميل فيديو يوتيوب MP4*
 
-📌 Title: ${result.title}
-📺 Channel: ${result.author}
-🎞 Quality: ${quality}
+📌 العنوان: ${result.title}
+📺 القناة: ${result.author}
+🎞 الجودة: ${quality}
 
-Enjoy your video!`,
+استمتع بالفيديو!`,
       m
     )
 
   } catch (err) {
-    m.reply("❌ Error: " + err.message)
+    m.reply("❌ خطأ: " + err.message)
   }
 }
 
