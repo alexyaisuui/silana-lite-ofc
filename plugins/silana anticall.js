@@ -2,12 +2,24 @@ conn.ev.on("call", async (json) => {
   for (let id of json) {
     if (id.status === "offer") {
       let msg = await conn.sendMessage(id.from, {
-        text: "`نعتذر، في الوقت الحالي لا يمكننا استقبال المكالمات، سواء كانت في مجموعة أو خاصة.\n\nإذا كنت بحاجة إلى مساعدة أو طلب  ميزة، يرجى مراسلة المالك. الاتصال بالبوتات ليس من الجيد  لانك تزعج صاحب البوت المرجو احترام سياسة استخدام البوتات سيتم حظرك حاليا حتى لا تعيد الكرة مجددا مع اي بوت كان`\n\n instagram.com/noureddine_ouafy\n لا تقل لي في الانستغرام ان البوت قام بحظرك لانني حذرتكم من الاتصال به 🥲",
+        text: `⚠️ تنبيه
+
+نعتذر، لا يمكن للبوت استقبال المكالمات حالياً ❌
+
+📩 إذا كنت تحتاج مساعدة أو طلب ميزة، تواصل مع المالك.
+
+🚫 الاتصال بالبوت يسبب إزعاج، لذلك سيتم حظرك تلقائياً.
+
+📸 إنستغرام:
+https://instagram.com/manon_tech__99
+
+⚡ المرجو احترام قوانين استخدام البوت`
       });
 
       conn.sendContact(id.from, global.owner, msg);
-      await conn.rejectCall(id.id, id.from); // Block the user
+      await conn.rejectCall(id.id, id.from);
 
+      // حظر المستخدم
       await conn.updateBlockStatus(id.from, "block");
     }
   }
