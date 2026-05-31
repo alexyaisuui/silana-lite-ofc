@@ -1,11 +1,14 @@
-// plugin by instagram.com/noureddine_ouafy
+// إضافة (Plugin) بواسطة instagram.com/noureddine_ouafy
 import crypto from "crypto"
 import axios from "axios"
 
 class SaveTube {
   constructor() {
     this.ky = 'C5D58EF67A7584E4A29F6C35BBC4EB12'
+    // تحقق من رابط يوتيوب
     this.m = /^((?:https?:)?\/\/)?((?:www|m|music)\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(?:embed\/)?(?:v\/)?(?:shorts\/)?([a-zA-Z0-9_-]{11})/
+    
+    // إعدادات الاتصال
     this.is = axios.create({
       headers: {
         'content-type': 'application/json',
@@ -15,6 +18,7 @@ class SaveTube {
     })
   }
 
+  // فك التشفير
   async decrypt(enc) {
     const buf = Buffer.from(enc, 'base64')
     const key = Buffer.from(this.ky, 'hex')
@@ -30,14 +34,16 @@ class SaveTube {
     return JSON.parse(decrypted.toString())
   }
 
+  // الحصول على CDN عشوائي
   async getCdn() {
     const res = await this.is.get("https://media.savetube.vip/api/random-cdn")
     return { status: true, data: res.data.cdn }
   }
 
+  // تحميل الصوت من يوتيوب
   async download(url) {
     const id = url.match(this.m)?.[3]
-    if (!id) throw "Invalid YouTube URL"
+    if (!id) throw "رابط يوتيوب غير صالح"
 
     const cdn = await this.getCdn()
     const info = await this.is.post(`https://${cdn.data}/v2/info`, {
@@ -62,12 +68,12 @@ class SaveTube {
   }
 }
 
-/* ================= HANDLER ================= */
+/* ================= المعالج ================= */
 
 let handler = async (m, { conn, args }) => {
   if (!args[0]) {
     return m.reply(
-      `❌ Usage:\n.ytmp3 <youtube_url>\n\nExample:\n.ytmp3 https://youtu.be/U2vyax9Uufc`
+      `❌ طريقة الاستخدام:\n.ytmp3 <رابط_يوتيوب>\n\nمثال:\n.ytmp3 https://youtu.be/U2vyax9Uufc`
     )
   }
 
@@ -75,14 +81,14 @@ let handler = async (m, { conn, args }) => {
   const st = new SaveTube()
 
   try {
-    m.reply("⏳ Downloading audio...")
+    m.reply("⏳ جاري تحميل الصوت...")
 
     const res = await st.download(url)
 
     let caption = `
-🎵 *Title:* ${res.title}
-⏱ *Duration:* ${res.duration}
-📦 *Format:* MP3
+🎵 *العنوان:* ${res.title}
+⏱ *المدة:* ${res.duration}
+📦 *الصيغة:* MP3
 `
 
     await conn.sendMessage(m.chat, {
@@ -93,7 +99,7 @@ let handler = async (m, { conn, args }) => {
     }, { quoted: m })
 
   } catch (e) {
-    m.reply(`❌ Error: ${e}`)
+    m.reply(`❌ خطأ: ${e}`)
   }
 }
 
