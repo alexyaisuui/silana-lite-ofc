@@ -14,18 +14,18 @@ global.setting = {
  }
 
 global.info = {
- nomerbot : '212605784394',
- pairingNumber : '212605784394',
- figlet: 'silanalite', // create a start console display
- nomorwa : '212605784394',
- nameown : 'NOUREDDINE',
- nomerown : '212717457920',
+ nomerbot : '212619848639',
+ pairingNumber : '212619848639',
+ figlet: 'Alexy-Ai', // create a start console display
+ nomorwa : '212619848639',
+ nameown : 'MANON TECH',
+ nomerown : '212709138520',
  packname : 'sticker by ',
- author : 'SILANA AI',
- namebot : '乂 SILANA AI',
- wm : 'SILANA LITE.',
+ author : 'ALEXY AI',
+ namebot : '乂 ALEXY AI',
+ wm : 'ALEXY-MD.',
  stickpack : 'Whatsapp',
- stickauth : 'SILANA LITE',
+ stickauth : 'ALEXY AI',
  jid: '@s.whatsapp.net'
 }
 
