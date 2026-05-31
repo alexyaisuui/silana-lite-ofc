@@ -9,7 +9,7 @@ import { createCanvas, loadImage } from 'canvas'
 export async function before(m, { conn, participants, groupMetadata }) {
   if (!m.isGroup || !m.messageStubType) return true
 
-  const dev = 'Silana'
+  const dev = 'Alexy Ai'
 
   const fkontak = {
     key: {
