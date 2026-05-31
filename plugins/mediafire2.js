@@ -1,10 +1,10 @@
-// scrape by hannuniverse 
-// plugin by noureddine ouafy
+// تم الاستخراج بواسطة hannuniverse 
+// الإضافة بواسطة noureddine ouafy
 import axios from 'axios'
 import cheerio from 'cheerio'
 import { URL } from 'url'
 
-/* ================= MEDIAFIRE SCRAPER ================= */
+/* ================= أداة استخراج MediaFire ================= */
 
 class MediaFireDownloader {
   constructor() {
@@ -64,15 +64,15 @@ class MediaFireDownloader {
   }
 }
 
-/* ================= HELPERS ================= */
+/* ================= دوال مساعدة ================= */
 
 function fixFilename(filename, downloadUrl) {
   filename = filename?.trim() || 'file'
 
-  // already has extension
+  // إذا كان الاسم يحتوي على امتداد مسبقاً
   if (/\.[a-z0-9]+$/i.test(filename)) return filename
 
-  // extract extension from URL
+  // استخراج الامتداد من الرابط
   const extMatch = downloadUrl.match(/\.([a-z0-9]+)(?:\?|$)/i)
   if (extMatch) {
     return `${filename}.${extMatch[1]}`
@@ -101,23 +101,23 @@ function getMimeFromFilename(filename) {
   return map[ext] || 'application/octet-stream'
 }
 
-/* ================= HANDLER ================= */
+/* ================= المعالج ================= */
 
 let handler = async (m, { conn, args }) => {
   if (!args[0])
-    throw '❌ Please provide a MediaFire link.\n\nExample:\n.mediafire https://www.mediafire.com/file/...'
+    throw '❌ المرجو إدخال رابط MediaFire.\n\nمثال:\n.mediafire https://www.mediafire.com/file/...'
 
   if (!args[0].includes('mediafire.com'))
-    throw '❌ Invalid MediaFire URL.'
+    throw '❌ رابط MediaFire غير صالح.'
 
-  await conn.reply(m.chat, '⏳ Downloading file, please wait...', m)
+  await conn.reply(m.chat, '⏳ جاري تحميل الملف، المرجو الانتظار...', m)
 
   const mf = new MediaFireDownloader()
   const data = await mf.extract(args[0])
 
-  if (!data) throw '❌ Failed to extract MediaFire link.'
+  if (!data) throw '❌ فشل في استخراج رابط MediaFire.'
 
-  // 🔽 Download file
+  // 🔽 تحميل الملف
   const res = await axios.get(data.downloadUrl, {
     responseType: 'arraybuffer',
     maxContentLength: Infinity,
@@ -126,11 +126,11 @@ let handler = async (m, { conn, args }) => {
 
   const buffer = Buffer.from(res.data)
 
-  // 🔥 Fix filename & mimetype
+  // 🔥 إصلاح اسم الملف ونوعه
   const fixedName = fixFilename(data.filename, data.downloadUrl)
   const mimetype = getMimeFromFilename(fixedName)
 
-  // 📤 Send as document (safe for all formats)
+  // 📤 إرسال كملف (آمن لكل الصيغ)
   await conn.sendMessage(
     m.chat,
     {
@@ -142,7 +142,7 @@ let handler = async (m, { conn, args }) => {
   )
 }
 
-/* ================= META ================= */
+/* ================= معلومات ================= */
 
 handler.help = ['mediafire2']
 handler.command = ['mediafire2']
