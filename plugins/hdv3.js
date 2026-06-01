@@ -117,12 +117,12 @@ let handler = async (m, { conn }) => {
 
     // Validate image
     if (!/image/.test(mime)) {
-      throw "Reply to or send an image with command *.hdv3*"
+      throw "قم بالرد على صورة أو أرسل صورة باستخدام الأمـر : *.hdv3*"
     }
 
     // React loading
     await conn.sendMessage(m.chat, {
-      react: { text: "⏳", key: m.key }
+      react: { text: "💡", key: m.key }
     })
 
     // Download image
@@ -141,9 +141,9 @@ let handler = async (m, { conn }) => {
     // Send result
     await conn.sendMessage(m.chat, {
       image: { url: result.result },
-      caption: `✨ *HD Image successfully created*
+      caption: `✨ *تم إنـشاء صـورة HD بنـجاح*
 
-📦 Size: ${size}`
+📦 الحـجم: ${size}`
     }, { quoted: m })
 
   } catch (e) {
