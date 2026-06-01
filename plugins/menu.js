@@ -7,7 +7,7 @@ let handler = async (m, { conn, usedPrefix, command, args }) => {
     let date = d.toLocaleDateString('en', { day: 'numeric', month: 'long', year: 'numeric' })
     let time = moment().tz('Africa/Casablanca').format('HH:mm:ss')
 
-    const bgImage = 'https://files.catbox.moe/0cj5za.jpg'
+    const bgImage = 'https://files.catbox.moe/sn6cpj.jpg'
     const channelUrl = 'https://whatsapp.com/channel/0029Vb7nYRZHAdNWqXl8ug1b'
 
     const tagCount = {}
