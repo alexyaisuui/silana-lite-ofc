@@ -1,5 +1,6 @@
-// plugin edit by instagram.com/noureddine_ouafy
-// code origine by https://github.com/mruniquehacker/Knightbot-MD/blob/main/commands/video.js thanks brother
+// تم تعديل الإضافة بواسطة instagram.com/noureddine_ouafy
+// الكود الأصلي من https://github.com/mruniquehacker/Knightbot-MD/blob/main/commands/video.js شكراً له
+
 import axios from 'axios'
 import yts from 'yt-search'
 
@@ -11,6 +12,7 @@ const AXIOS_DEFAULTS = {
     }
 }
 
+// دالة لإعادة المحاولة في حالة فشل الطلب
 async function tryRequest(getter, attempts = 3) {
     let lastError
     for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -26,8 +28,9 @@ async function tryRequest(getter, attempts = 3) {
     throw lastError
 }
 
-// ===== DOWNLOAD SOURCES =====
+// ===== مصادر التحميل =====
 
+// API الأول
 async function getEliteProTechVideoByUrl(youtubeUrl) {
     const apiUrl = `https://eliteprotech-apis.zone.id/ytdown?url=${encodeURIComponent(youtubeUrl)}&format=mp4`
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS))
@@ -37,9 +40,10 @@ async function getEliteProTechVideoByUrl(youtubeUrl) {
             title: res.data.title
         }
     }
-    throw new Error('EliteProTech failed')
+    throw new Error('فشل API الأول EliteProTech')
 }
 
+// API الثاني
 async function getYupraVideoByUrl(youtubeUrl) {
     const apiUrl = `https://api.yupra.my.id/api/downloader/ytmp4?url=${encodeURIComponent(youtubeUrl)}`
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS))
@@ -50,9 +54,10 @@ async function getYupraVideoByUrl(youtubeUrl) {
             thumbnail: res.data.data.thumbnail
         }
     }
-    throw new Error('Yupra failed')
+    throw new Error('فشل API الثاني Yupra')
 }
 
+// API الثالث
 async function getOkatsuVideoByUrl(youtubeUrl) {
     const apiUrl = `https://okatsu-rolezapiiz.vercel.app/downloader/ytmp4?url=${encodeURIComponent(youtubeUrl)}`
     const res = await tryRequest(() => axios.get(apiUrl, AXIOS_DEFAULTS))
@@ -62,23 +67,23 @@ async function getOkatsuVideoByUrl(youtubeUrl) {
             title: res.data.result.title
         }
     }
-    throw new Error('Okatsu failed')
+    throw new Error('فشل API الثالث Okatsu')
 }
 
-// ===== MAIN HANDLER =====
+// ===== المعالج الرئيسي =====
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
     try {
         if (!text) {
             return conn.reply(m.chat, 
-`🎬 *YouTube Video Downloader*
+`🎬 *تحميل فيديو من يوتيوب*
 
-Usage:
-${usedPrefix}ytvideo <YouTube link>
-OR
-${usedPrefix}ytvideo <video title>
+طريقة الاستخدام:
+${usedPrefix}ytvideo <رابط يوتيوب>
+أو
+${usedPrefix}ytvideo <اسم الفيديو>
 
-Example:
+مثال:
 ${usedPrefix}ytvideo Alan Walker Faded
 ${usedPrefix}ytvideo https://youtu.be/dQw4w9WgXcQ`,
             m)
@@ -88,19 +93,21 @@ ${usedPrefix}ytvideo https://youtu.be/dQw4w9WgXcQ`,
         let videoTitle = ''
         let videoThumbnail = ''
 
+        // إذا المستخدم أرسل رابط مباشر
         if (text.startsWith('http://') || text.startsWith('https://')) {
             videoUrl = text
         } else {
+            // البحث عن الفيديو
             const { videos } = await yts(text)
             if (!videos || !videos.length) {
-                return conn.reply(m.chat, '❌ No videos found.', m)
+                return conn.reply(m.chat, '❌ لم يتم العثور على فيديو.', m)
             }
             videoUrl = videos[0].url
             videoTitle = videos[0].title
             videoThumbnail = videos[0].thumbnail
         }
 
-        await conn.reply(m.chat, '⏳ Downloading your video, please wait...', m)
+        await conn.reply(m.chat, '⏳ جاري تحميل الفيديو، يرجى الانتظار...', m)
 
         const apiMethods = [
             () => getEliteProTechVideoByUrl(videoUrl),
@@ -117,22 +124,23 @@ ${usedPrefix}ytvideo https://youtu.be/dQw4w9WgXcQ`,
         }
 
         if (!videoData?.download) {
-            throw new Error('All download sources failed.')
+            throw new Error('فشلت جميع مصادر التحميل')
         }
 
         await conn.sendMessage(m.chat, {
             video: { url: videoData.download },
             mimetype: 'video/mp4',
             fileName: `${(videoData.title || videoTitle || 'video').replace(/[^\w\s-]/g, '')}.mp4`,
-            caption: `🎬 *${videoData.title || videoTitle || 'Video'}*\n\nDownloaded successfully!`
+            caption: `🎬 *${videoData.title || videoTitle || 'فيديو'}*\n\nتم التحميل بنجاح!`
         }, { quoted: m })
 
     } catch (err) {
         console.error(err)
-        conn.reply(m.chat, `❌ Error: ${err.message}`, m)
+        conn.reply(m.chat, `❌ خطأ: ${err.message}`, m)
     }
 }
 
+// معلومات الأوامر
 handler.help = ['ytvideo']
 handler.tags = ['downloader']
 handler.command = ['ytvideo']
