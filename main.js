@@ -274,11 +274,11 @@ async function connectionUpdate(update) {
     if (global.db.data == null) loadDatabase()
     if (connection === "open") {
         const deviceName = os.hostname();
-        const message = `• *معلومات*: البوت نشط\n
-◦ *المنصة*: ${os.platform()} ${os.release()}
-◦ *جهاز*: ${deviceName}
-◦ *اسم البوت*: ${global.namebot}
-◦ *الوقت المتصل*: ${new Date().toLocaleString()}\n\n قناتي على الواتساب للمزيد من المعلومات \nhttps://whatsapp.com/channel/0029Vb7nYRZHAdNWqXl8ug1b`;
+        const message = `• *مـعلومـات*: البـوت نشـط\n
+◦ *المـنصة*: ${os.platform()} ${os.release()}
+◦ *جـهاز*: ${deviceName}
+◦ *اسم البـوت*: ${global.namebot}
+◦ *الـوقت المتـصل*: ${new Date().toLocaleString()}\n\n قـناتي علـى الواتـساب للمـزيد مـن المعلـومات \nhttps://whatsapp.com/channel/0029Vb7nYRZHAdNWqXl8ug1b`;
         
         this.sendMessage(global.nomerown + `@s.whatsapp.net`, {
             text: message
@@ -321,8 +321,8 @@ global.reloadHandler = async function(restatConn) {
         conn.ev.off('connection.update', conn.connectionUpdate)
         conn.ev.off('creds.update', conn.credsUpdate)
     }
-    conn.welcome = 'مرحبا بك في أقوى مجموعة لبوتات الواتساب الرجاء قراءة قوانين المجموعة حتى لا يتم طردك  ، سيلانا اول بوت واتساب في الوطن العربي \n\n welcome to the groupe please read the rules of the group\n\n\n @subject, @user\n'
-    conn.bye = '\n  مع السلامة  اتمنى ألا تعود الى هـــــــــنا \n@user 👋'
+    conn.welcome = 'مـرحبا بك فـي مجـموعـة ALEXY AI \n\n welcome to the groupe please read the rules of the group\n\n\n @subject, @user\n'
+    conn.bye = '\n  مـع السـلامة  اتمـنى ألا تعـود الـى هـــــــــنا \n@user 👋'
     conn.spromote = '@user *يرقي* إلى المشرف '
     conn.sdemote = '@user *خفض الرتبة* من المشرف'
     conn.sDesc = 'تم تغيير الوصف إلى \n@desc'
@@ -510,3 +510,4 @@ setInterval(async () => {
 _quickTest().catch(console.error);
 
 (await import('./function/system/schedule.js')).schedule(db, conn)
+    
