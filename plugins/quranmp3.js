@@ -1,30 +1,42 @@
 import axios from 'axios';
 
+// كائن خاص بجلب التلاوات (المقرئين)
 const Murottal = {
+    // جلب قائمة التلاوات
     async list() {
         try {
             let res = await axios.get('https://www.assabile.com/ajax/loadplayer-12-9');
-            if (!res.data || !res.data.Recitation) throw new Error('Invalid data format');
+            
+            // التحقق من صحة البيانات
+            if (!res.data || !res.data.Recitation) throw new Error('تنسيق البيانات غير صحيح');
+            
             return res.data.Recitation;
         } catch (error) {
-            console.error('Error while fetching the murottal list:', error.message);
+            console.error('حدث خطأ أثناء جلب قائمة التلاوات:', error.message);
             return [];
         }
     },
+
+    // البحث عن سورة بالاسم أو الرقم
     async search(q) {
         let list = await Murottal.list();
         if (list.length === 0) return [];
 
+        // إذا كان الإدخال رقم يرجع السورة مباشرة
         if (typeof q === 'number') return [list[q - 1]];
 
+        // تنظيف النص والبحث
         q = q.toLowerCase().replace(/\W/g, '');
         return list.filter(_ => 
             _.span_name.toLowerCase().replace(/\W/g, '').includes(q)
         );
     },
+
+    // جلب رابط الصوت
     async audio(d) {
         try {
-            if (!d.href) throw new Error('Data does not contain href');
+            if (!d.href) throw new Error('البيانات لا تحتوي على رابط');
+
             let res = await axios.get(`https://www.assabile.com/ajax/getrcita-link-${d.href.slice(1)}`, {
                 headers: {
                     'authority': 'www.assabile.com',
@@ -41,32 +53,49 @@ const Murottal = {
                 decompress: true
             });
 
-            if (!res.data) throw new Error('Failed to fetch audio');
+            if (!res.data) throw new Error('فشل في جلب الصوت');
+
             return res.data;
         } catch (error) {
-            console.error('Error while fetching audio:', error.message);
+            console.error('حدث خطأ أثناء جلب الصوت:', error.message);
             return null;
         }
     }
 };
 
+// الهاندلر (الأمر الخاص بالبوت)
 let handler = async (m, { conn, text }) => {
-    if (!text) return m.reply('Please enter the name or number of the Surah.');
+
+    // التحقق من إدخال المستخدم
+    if (!text) return m.reply('يرجى إدخال اسم السورة أو رقمها.');
 
     try {
+        // البحث عن السورة
         let searchResults = await Murottal.search(isNaN(parseInt(text)) ? text : parseInt(text));
-        if (searchResults.length === 0) return m.reply('No murottal found for the given search.');
+        
+        if (searchResults.length === 0) 
+            return m.reply('لم يتم العثور على تلاوة مطابقة.');
 
+        // جلب رابط الصوت
         let audioUrl = await Murottal.audio(searchResults[0]);
-        if (!audioUrl) return m.reply('Failed to retrieve audio.');
+        
+        if (!audioUrl) 
+            return m.reply('فشل في جلب الصوت.');
 
-        await conn.sendMessage(m.chat, { audio: { url: audioUrl }, mimetype: 'audio/mp4' }, { quoted: m });
+        // إرسال الصوت
+        await conn.sendMessage(
+            m.chat,
+            { audio: { url: audioUrl }, mimetype: 'audio/mp4' },
+            { quoted: m }
+        );
+
     } catch (error) {
         console.error(error);
-        m.reply('An error occurred while fetching data.');
+        m.reply('حدث خطأ أثناء جلب البيانات.');
     }
 };
 
+// معلومات الأمر
 handler.help = ['quranmp3'];
 handler.tags = ['islamic'];
 handler.command = /^(quranmp3)$/i;
