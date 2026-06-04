@@ -1,8 +1,8 @@
 // ============================================================
-//  📖  SEERAH — Biography of the Prophet ﷺ by Nabil Al-Awadi
-//  Command : .seerah  |  .seerah <episode number>
-//  Tags    : islamic
-// plugin by noureddine Ouafy 
+//  📖  السيرة — سيرة النبي ﷺ بصوت نبيل العوضي
+//  الأمر : .seerah  |  .seerah <رقم الحلقة>
+//  التصنيف : إسلامي
+//  الإضافة بواسطة noureddine Ouafy
 // ============================================================
 
 const EPISODES = [
@@ -38,72 +38,68 @@ const EPISODES = [
   { ep: 30, size: '13.8M', url: 'https://archive.org/download/seera_nabawiya_al3awadi/seera30.mp3' },
 ]
 
-// ─── Guide message shown when no episode number is provided ───────────────────
+// ─── رسالة الدليل عند عدم إدخال رقم الحلقة ───────────────────
 function buildGuide() {
   const episodeList = EPISODES.map(e =>
-    `  📌 Episode ${String(e.ep).padStart(2, '0')} — ${e.size}`
+    `  📌 الحلقة ${String(e.ep).padStart(2, '0')} — ${e.size}`
   ).join('\n')
 
   return `
 ╔══════════════════════════════════╗
-║  📖  Seerah — The Prophet's ﷺ   ║
-║        Biography Series          ║
+║  📖  السيرة — سيرة النبي ﷺ     ║
+║        سلسلة كاملة صوتية        ║
 ╚══════════════════════════════════╝
 
-🎙️ *Presented by:* Sheikh Nabil Al-Awadi
-📦 *Total Episodes:* ${EPISODES.length} episodes
-🗂️ *Format:* MP3 Audio
+🎙️ *تقديم:* الشيخ نبيل العوضي
+📦 *عدد الحلقات:* ${EPISODES.length} حلقة
+🗂️ *الصيغة:* MP3 صوتي
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📋 *AVAILABLE EPISODES*
+📋 *الحلقات المتوفرة*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${episodeList}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 *HOW TO USE*
+📌 *طريقة الاستخدام*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-To get a specific episode, type:
+للحصول على حلقة معينة، اكتب:
 
-  *.seerah <episode number>*
+  *.seerah <رقم الحلقة>*
 
-  Example → *.seerah 1*
-  Example → *.seerah 15*
+  مثال → *.seerah 1*
+  مثال → *.seerah 15*
 
-The bot will send you a direct
-download link for that episode! 🎧
+سيقوم البوت بإرسال رابط مباشر
+للتحميل أو الاستماع 🎧
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🕌 *About This Series*
+🕌 *عن هذه السلسلة*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This is a complete audio series on
-the life of Prophet Muhammad ﷺ,
-narrated by the renowned Islamic
-scholar Sheikh Nabil Al-Awadi.
+هذه سلسلة صوتية كاملة عن
+سيرة النبي محمد ﷺ،
+بصوت الشيخ نبيل العوضي.
 
-Listening to the Seerah deepens
-your love for the Prophet ﷺ and
-strengthens your character.
+الاستماع للسيرة يزيد حبك
+للنبي ﷺ ويقوي شخصيتك.
 
-May Allah bless you 🤲
+جزاك الله خيرًا 🤲
 `.trim()
 }
 
-// ─── Handler ──────────────────────────────────────────────────────────────────
+// ─── المعالج الرئيسي ─────────────────────────────────────────
 let handler = async (m, { conn, args }) => {
 
-  // If the user typed a number, send that episode
   if (args[0]) {
     const num = parseInt(args[0])
 
-    // Validate the number
     if (isNaN(num) || num < 1 || num > EPISODES.length) {
       await conn.sendMessage(
         m.chat,
         {
           text:
-            `❌ *Invalid episode number!*\n\n` +
-            `Please enter a number between *1* and *${EPISODES.length}*.\n\n` +
-            `Example: *.seerah 5*`
+            `❌ *رقم الحلقة غير صحيح!*\n\n` +
+            `الرجاء إدخال رقم بين *1* و *${EPISODES.length}*.\n\n` +
+            `مثال: *.seerah 5*`
         },
         { quoted: m }
       )
@@ -112,47 +108,43 @@ let handler = async (m, { conn, args }) => {
 
     const episode = EPISODES.find(e => e.ep === num)
 
-    // 1️⃣ Send a quick info message first
     await conn.sendMessage(
       m.chat,
       {
         text:
-          `⏳ *Loading Episode ${episode.ep} of ${EPISODES.length}...*\n\n` +
-          `📖 Seerah — Biography of the Prophet ﷺ\n` +
-          `👤 Sheikh Nabil Al-Awadi\n` +
-          `📦 Size: *${episode.size}*\n\n` +
-          `_Please wait while the audio is being sent..._`
+          `⏳ *جاري تحميل الحلقة ${episode.ep} من ${EPISODES.length}...*\n\n` +
+          `📖 السيرة — سيرة النبي ﷺ\n` +
+          `👤 الشيخ نبيل العوضي\n` +
+          `📦 الحجم: *${episode.size}*\n\n` +
+          `_يرجى الانتظار حتى يتم إرسال الصوت..._`
       },
       { quoted: m }
     )
 
-    // 2️⃣ Stream the MP3 directly as a WhatsApp audio message
     await conn.sendMessage(
       m.chat,
       {
         audio: { url: episode.url },
         mimetype: 'audio/mpeg',
-        ptt: false,                           // false = audio player (not voice note)
+        ptt: false,
         fileName: `Seerah_Episode_${String(episode.ep).padStart(2, '0')}_NabilAlAwadi.mp3`,
       },
       { quoted: m }
     )
 
-    // 3️⃣ Send navigation tip after the audio
     await conn.sendMessage(
       m.chat,
       {
         text:
-          `✅ *Episode ${episode.ep} sent!*\n\n` +
-          `_To listen to another episode, type:_\n` +
-          `*.seerah <episode number>*\n\n` +
-          `Example: *.seerah ${episode.ep < EPISODES.length ? episode.ep + 1 : 1}*`
+          `✅ *تم إرسال الحلقة ${episode.ep} بنجاح!*\n\n` +
+          `_للاستماع إلى حلقة أخرى اكتب:_\n` +
+          `*.seerah <رقم الحلقة>*\n\n` +
+          `مثال: *.seerah ${episode.ep < EPISODES.length ? episode.ep + 1 : 1}*`
       },
       { quoted: m }
     )
 
   } else {
-    // No argument — send the full guide with episode list
     await conn.sendMessage(
       m.chat,
       { text: buildGuide() },
@@ -161,7 +153,7 @@ let handler = async (m, { conn, args }) => {
   }
 }
 
-// ─── Meta ─────────────────────────────────────────────────────────────────────
+// ─── معلومات الأمر ───────────────────────────────────────────
 handler.help    = ['seerah']
 handler.command = ['seerah']
 handler.tags    = ['islamic']
