@@ -5,11 +5,11 @@
  */
 
 let handler = async (m, { conn }) => {
-  const teks = `📦 *رابط السورس كود الخاص بالبوت:*\n` +
-    `https://github.com/noureddineouafy/silana-lite-ofc\n\n` +
-    `📢 *القناة الرسمية على واتساب:*\n` +
-    `https://whatsapp.com/channel/0029VaX4b6J7DAWqt3Hhu01A\n\n` +
-    `⭐ لا تنسَ وضع نجمة على المستودع إذا أعجبك المشروع!`;
+  const teks = 
+   
+    `📢 *القناة الرسـمية علـى واتسـاب:*\n` +
+    `https://whatsapp.com/channel/0029Vb7nYRZHAdNWqXl8ug1b\n\n` +
+    ``;
 
   await conn.reply(m.chat, teks, m);
 };
