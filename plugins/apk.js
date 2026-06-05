@@ -33,24 +33,24 @@ let handler = async (m, { conn, usedPrefix, command, args, text }) => {
     // Case 1: no text = show list menu
     if (!text) {
       const sections = [{
-        title: "التطبيقات السريعة",
+        title: "📱 التطبيقات الأكثر طلباً",
         rows: quickApps.map(app => ({
           id: `${usedPrefix}${command} ${app.name}`,
           title: app.title,
-          description: "اضغط للتحميل المباشر"
+          description: `⚡ اضغط لتحميل ${app.title} مباشرةً بدون بحث`
         }))
       }];
 
       await conn.sendMessage(m.chat, {
         text: "اختر تطبيق من القائمة أو اكتب `.apk اسم التطبيق` للبحث\nمثال: `.apk clash of clans`",
-        footer: "© APK Downloader",
+        footer: "🤖 روبوت تحميل التطبيقات | APK Downloader",
         buttons: [{
           buttonId: 'apk_menu',
           buttonText: { displayText: "📱 اضغط هنا واختر تطبيق" },
           type: 4,
           nativeFlowInfo: {
             name: 'single_select',
-            paramsJson: JSON.stringify({ title: "اختر التطبيق", sections })
+            paramsJson: JSON.stringify({ title: "📦 اختر التطبيق الذي تريد تحميله", sections })
           }
         }],
         headerType: 1
@@ -71,24 +71,24 @@ let handler = async (m, { conn, usedPrefix, command, args, text }) => {
     if (!results || results.length === 0) throw new Error("ما لقيت تطبيقات، جرب اسم ثاني");
 
     const sections = [{
-      title: `نتائج البحث عن: ${text}`,
+      title: `🔍 نتائج البحث عن: ${text}`,
       rows: results.slice(0, 10).map((app, i) => ({
         id: `${usedPrefix}${command} dl ${Buffer.from(JSON.stringify(app)).toString('base64')}`,
-        title: app.appname,
-        description: `${app.developer} | ${app.size}`
+        title: `${i + 1}. ${app.appname}`,
+        description: `👨‍💻 ${app.developer}  •  📦 الحجم: ${app.size}  •  اضغط للتحميل`
       }))
     }];
 
     await conn.sendMessage(m.chat, {
-      text: `لقيت ${results.length} نتيجة. اختر التطبيق اللي تبيه:`,
-      footer: "© APK Downloader",
+      text: `✅ تم العثور على *${results.length}* نتيجة للبحث عن *${text}*\nاختر التطبيق المناسب من القائمة أدناه 👇`,
+      footer: "🤖 روبوت تحميل التطبيقات | APK Downloader",
       buttons: [{
         buttonId: 'apk_results',
-        buttonText: { displayText: "📋 عرض النتائج" },
+        buttonText: { displayText: "📋 عرض نتائج البحث" },
         type: 4,
         nativeFlowInfo: {
           name: 'single_select',
-          paramsJson: JSON.stringify({ title: "اختر التطبيق", sections })
+          paramsJson: JSON.stringify({ title: "📦 اختر التطبيق الذي تريد تحميله", sections })
         }
       }],
       headerType: 1
