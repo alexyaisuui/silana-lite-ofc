@@ -1,5 +1,5 @@
-// تم الترجمة والتعديل بواسطة noureddine
-// البلجن بواسطة Izuku-mi
+//translate and modified by noureddine
+//plugin by Izuku-mi
 
 import axios from "axios"
 import crypto from "crypto"
@@ -7,11 +7,11 @@ import yts from "yt-search"
 
 const handler = async (m, { text, conn }) => {
     try {
-        if (!text) return m.reply("🎧 ما هي الأغنيـة التي تريد تشغيلها؟")
+        if (!text) return m.reply("🎧 ما هي الأغنية التي تريد تشغيلها؟")
 
         const { all } = await yts(text)
         const metadata = all[0]
-        if (!metadata) return m.reply("❌ لـم يـتم العـثور على الأغنـية")
+        if (!metadata) return m.reply("❌ لم يتم العثور على الأغنية")
 
         const url = metadata.url
 
@@ -29,16 +29,16 @@ const handler = async (m, { text, conn }) => {
 
         const videoId = idMatch[1]
 
-        // جلب CDN
+        // الحصول على CDN
         const { data: cdnRes } = await client.get("https://media.savetube.vip/api/random-cdn")
         const cdn = cdnRes.cdn
 
-        // جلب المعلومات المشفرة
+        // الحصول على المعلومات المشفرة
         const { data: infoRes } = await client.post(`https://${cdn}/v2/info`, {
             url: `https://www.youtube.com/watch?v=${videoId}`
         })
 
-        // فك التشفير
+        // فك تشفير البيانات
         const encrypted = Buffer.from(infoRes.data, "base64")
         const key = Buffer.from("C5D58EF67A7584E4A29F6C35BBC4EB12", "hex")
         const iv = encrypted.subarray(0, 16)
@@ -60,15 +60,15 @@ const handler = async (m, { text, conn }) => {
         })
 
         const download = dlRes?.data?.downloadUrl
-        if (!download) throw new Error("فشل في الحصول على رابط التحميل")
+        if (!download) throw new Error("فشل الحصول على رابط التحميل")
 
-        const caption = `*🎵 تـشغيل الأغـنيـة:*
-*🌴 العـنوان:* ${metadata.title || ""}
-*🎨 الـفنان:* ${metadata.author?.name || ""}
-*🔗 الـرابـط:* ${metadata.url || ""}
+        const caption = `*🎵 تشـغيل الموسـيقى:*
+*📌 العـنوان:* ${metadata.title || ""}
+*✨ الفـنان:* ${metadata.author?.name || ""}
+*🔗 الرابـط:* ${metadata.url || ""}
 *⏱️ المـدة:* ${metadata.timestamp || ""}
 
-*✨ بـوسطة :* Alexy Ai
+(+) بـوسـطة: Alexy Ai`
 
         await conn.sendMessage(
             m.chat,
@@ -90,7 +90,7 @@ const handler = async (m, { text, conn }) => {
 
     } catch (e) {
         console.error(e)
-        m.reply("❌ حـدث خطأ، ربما هناك ضغط كبير على السيرفر")
+        m.reply("❌ حدث خطأ. ربما هناك طلبات كثيرة في نفس الوقت.")
     }
 }
 
