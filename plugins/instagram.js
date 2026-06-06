@@ -3,30 +3,30 @@ import cheerio from "cheerio";
 import qs from "qs";
 
 let handler = async (m, { conn, usedPrefix, command, text }) => {
-    if (!text) return m.reply(`• *Example*: ${usedPrefix + command} *[Instagram URL]*`);
-    if (!text.includes('instagram.com')) return m.reply(`• *Example*: ${usedPrefix + command} *[Instagram URL]*`);
+    if (!text) return m.reply(`• *مـثال*: ${usedPrefix + command} *[رابـط إنسـتغرام]*`);
+    if (!text.includes('instagram.com')) return m.reply(`• *مـثال*: ${usedPrefix + command} *[رابط إنسـتغرام]*`);
 
-    m.reply("Please wait...");
+    m.reply("⏳ يـرجـى الانتـظار...");
     try {
         const result = await Instagram(text);
-        if (!result.url || result.url.length === 0) return m.reply("*No media found.*");
+        if (!result.url || result.url.length === 0) return m.reply("لـم يتم العـثور على وسـائط.");
 
         const mediaUrls = result.url;
         const metadata = result.metadata;
 
-        const caption = `*乂 I N S T A G R A M - D O W N L O A D E R*
+        const caption = `*乂 ALEXY AI *
 
-   *◦ Title:* ${metadata.caption}
-   *◦ Author:* ${metadata.username}
-   *◦ Type:* ${metadata.isVideo ? "Video" : "Photo"}
-   *◦ Likes:* ${formatShortNumber(metadata.like)}
-   *◦ Comments:* ${formatShortNumber(metadata.comment)}`.trim();
+   *الـعنـوان:* ${metadata.caption}
+   *النـاشـر:* ${metadata.username}
+   *الـنـوع:* ${metadata.isVideo ? "فيديو" : "صورة"}
+   *الإعـجابـات:* ${formatShortNumber(metadata.like)}
+   *التـعليقـات:* ${formatShortNumber(metadata.comment)}`.trim();
 
         for (const mediaUrl of mediaUrls) {
             await conn.sendFile(m.chat, mediaUrl, "", caption, m);
         }
     } catch (error) {
-        m.reply("An error occurred. Please try again later.");
+        m.reply("حدث خطأ، حاول مرة أخرى لاحقًا.");
     }
 };
 
@@ -49,7 +49,7 @@ const getDownloadLinks = (url) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!url.match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/) && !url.match(/(https|http):\/\/www.instagram.com\/(p|reel|tv|stories)/gi)) {
-                return reject({ msg: "Invalid URL" });
+                return reject({ msg: "رابط غير صالح" });
             }
 
             function decodeData(data) {
@@ -105,11 +105,11 @@ const getDownloadLinks = (url) => {
 
             const response = await axios.post("https://snapsave.app/action.php?lang=id", "url=" + url, {
                 headers: {
-                    accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                    accept: "*/*",
                     "content-type": "application/x-www-form-urlencoded",
                     origin: "https://snapsave.app",
                     referer: "https://snapsave.app/id",
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+                    "user-agent": "Mozilla/5.0"
                 }
             });
 
@@ -118,18 +118,14 @@ const getDownloadLinks = (url) => {
             const $ = cheerio.load(videoPageContent);
             const downloadLinks = [];
 
-            $("div.download-items__thumb").each((index, item) => {
-                $("div.download-items__btn").each((btnIndex, button) => {
-                    let downloadUrl = $(button).find("a").attr("href");
-                    if (!/https?:\/\//.test(downloadUrl || "")) {
-                        downloadUrl = "https://snapsave.app" + downloadUrl;
-                    }
-                    downloadLinks.push(downloadUrl);
-                });
+            $("div.download-items__btn").each((i, el) => {
+                let link = $(el).find("a").attr("href");
+                if (!/^https?:\/\//.test(link)) link = "https://snapsave.app" + link;
+                downloadLinks.push(link);
             });
 
             if (!downloadLinks.length) {
-                return reject({ msg: "No data found" });
+                return reject({ msg: "لم يتم العثور على بيانات" });
             }
 
             return resolve({
@@ -146,124 +142,39 @@ const getDownloadLinks = (url) => {
 
 const HEADERS = {
     Accept: "*/*",
-    "Accept-Language": "en-US,en;q=0.5",
     "Content-Type": "application/x-www-form-urlencoded",
-    "X-FB-Friendly-Name": "PolarisPostActionLoadPostQueryQuery",
-    "X-CSRFToken": "RVDUooU5MYsBbS1CNN3CzVAuEP8oHB52",
-    "X-IG-App-ID": "1217981644879628",
-    "X-FB-LSD": "AVqbxe3J_YA",
-    "X-ASBD-ID": "129477",
-    "Sec-Fetch-Dest": "empty",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-origin",
-    "User-Agent": "Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36",
+    "User-Agent": "Mozilla/5.0"
 };
 
 function getInstagramPostId(url) {
-    const regex = /(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|tv|stories|reel)\/([^/?#&]+).*/;
+    const regex = /instagram\.com\/(?:p|tv|stories|reel)\/([^/?#&]+)/;
     const match = url.match(regex);
     return match ? match[1] : null;
 }
 
-function encodeGraphqlRequestData(shortcode) {
-    const requestData = {
-        av: "0",
-        __d: "www",
-        __user: "0",
-        __a: "1",
-        __req: "3",
-        __hs: "19624.HYP:instagram_web_pkg.2.1..0.0",
-        dpr: "3",
-        __ccg: "UNKNOWN",
-        __rev: "1008824440",
-        __s: "xf44ne:zhh75g:xr51e7",
-        __hsi: "7282217488877343271",
-        __dyn: "7xeUmwlEnwn8K2WnFw9-2i5U4e0yoW3q32360CEbo1nEhw2nVE4W0om78b87C0yE5ufz81s8hwGwQwoEcE7O2l0Fwqo31w9a9x-0z8-U2zxe2GewGwso88cobEaU2eUlwhEe87q7-0iK2S3qazo7u1xwIw8O321LwTwKG1pg661pwr86C1mwraCg",
-        __csr: "gZ3yFmJkillQvV6ybimnG8AmhqujGbLADgjyEOWz49z9XDlAXBJpC7Wy-vQTSvUGWGh5u8KibG44dBiigrgjDxGjU0150Q0848azk48N09C02IR0go4SaR70r8owyg9pU0V23hwiA0LQczA48S0f-x-27o05NG0fkw",
-        __comet_req: "7",
-        lsd: "AVqbxe3J_YA",
-        jazoest: "2957",
-        __spin_r: "1008824440",
-        __spin_b: "trunk",
-        __spin_t: "1695523385",
-        fb_api_caller_class: "RelayModern",
-        fb_api_req_friendly_name: "PolarisPostActionLoadPostQueryQuery",
-        variables: JSON.stringify({
-            shortcode: shortcode,
-            fetch_comment_count: null,
-            fetch_related_profile_media_count: null,
-            parent_comment_count: null,
-            child_comment_count: null,
-            fetch_like_count: null,
-            fetch_tagged_user_count: null,
-            fetch_preview_comment_count: null,
-            has_threaded_comments: false,
-            hoisted_comment_id: null,
-            hoisted_reply_id: null,
-        }),
-        server_timestamps: "true",
-        doc_id: "10015901848480474",
-    };
-
-    return qs.stringify(requestData);
-}
-
-async function getPostGraphqlData(postId, proxy) {
-    try {
-        const encodedData = encodeGraphqlRequestData(postId);
-        const response = await axios.post("https://www.instagram.com/api/graphql", encodedData, { headers: HEADERS, httpsAgent: proxy });
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-}
-
-function extractPostInfo(mediaData) {
-    try {
-        const getUrlFromData = (data) => {
-            if (data.edge_sidecar_to_children) {
-                return data.edge_sidecar_to_children.edges.map((edge) => edge.node.video_url || edge.node.display_url);
-            }
-            return data.video_url ? [data.video_url] : [data.display_url];
-        };
-
-        return {
-            url: getUrlFromData(mediaData),
-            metadata: {
-                caption: mediaData.edge_media_to_caption.edges[0]?.node.text || null,
-                username: mediaData.owner.username,
-                like: mediaData.edge_media_preview_like.count,
-                comment: mediaData.edge_media_to_comment.count,
-                isVideo: mediaData.is_video,
-            }
-        };
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function ig(url, proxy = null) {
+async function ig(url) {
     const postId = getInstagramPostId(url);
-    if (!postId) {
-        throw new Error("Invalid Instagram URL");
-    }
-    const data = await getPostGraphqlData(postId, proxy);
-    const mediaData = data.data?.xdt_shortcode_media;
-    return extractPostInfo(mediaData);
+    if (!postId) throw new Error("رابط إنستغرام غير صالح");
+
+    const response = await axios.get(`https://www.instagram.com/p/${postId}/?__a=1`);
+    const media = response.data.graphql.shortcode_media;
+
+    return {
+        url: [media.video_url || media.display_url],
+        metadata: {
+            caption: media.edge_media_to_caption.edges[0]?.node.text || "",
+            username: media.owner.username,
+            like: media.edge_media_preview_like.count,
+            comment: media.edge_media_to_comment.count,
+            isVideo: media.is_video
+        }
+    };
 }
 
 async function Instagram(url) {
-    let result = "";
     try {
-        result = await ig(url);
-    } catch (e) {
-        try {
-            result = await getDownloadLinks(url);
-        } catch (e) {
-            result = {
-                msg: "Try again later"
-            };
-        }
+        return await ig(url);
+    } catch {
+        return await getDownloadLinks(url);
     }
-    return result;
-}
+    }
