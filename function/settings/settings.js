@@ -14,10 +14,10 @@ global.setting = {
  }
 
 global.info = {
- nomerbot : '212723881284',
- pairingNumber : '212723881284',
+ nomerbot : '212704144087',
+ pairingNumber : '212704144087',
  figlet: 'Alexy-Ai', // create a start console display
- nomorwa : '212723881284',
+ nomorwa : '212704144087',
  nameown : 'MANON TECH',
  nomerown : '212709138520',
  packname : 'sticker by ',
